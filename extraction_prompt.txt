@@ -1,0 +1,17 @@
+Extract menu items from the provided text and format them exactly as JSON.
+Strictly match this example structure without deviation:
+´´´json
+            {
+              "2025-04-02": {
+                "raw": "Mexikanische Hackfleischpfanne\n oder Tofu und Reis\nSalat und Dessert",
+                "meat": "Mexikanische Hackfleischpfanne und Reis",
+                "vegetarian": "Tofu und Reis",
+                "main_course": "Mexikanische Hackfleischpfanne und Reis",
+                "salad": true,
+                "dessert": true"
+              }
+            }
+´´´
+If there is no meat menu, use 'vegetarian' as the main course. and set 'meat' to 'null'.
+If the restaurant is closed (no menu), return an empty JSON object for that date. Also add saturday and sunday.
+Return ONLY valid JSON!
