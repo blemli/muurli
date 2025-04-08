@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from icecream import ic
 import openai, json, blemli, subprocess,logging,requests,sys,os
 from dotenv import load_dotenv
-
+from PIL import Image
 import click
 
 
@@ -98,7 +98,7 @@ def muurli(date,vegetarian,verbose):
         dish=current_menu["main_course"]
     print(dish)
     generate_menu_picture(dish,suffix,date)
-    subprocess.run(["qlmanage","-p", f"{IMAGE_FOLDER}/{date}{suffix}.png"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    Image.open(f"{IMAGE_FOLDER}/{date}{suffix}.png").show()
 
 
 
