@@ -2,13 +2,16 @@
 
 from bs4 import BeautifulSoup
 from icecream import ic
-import openai, json, blemli, subprocess,logging,requests,sys
+import openai, json, blemli, subprocess,logging,requests,sys,os
 from dotenv import load_dotenv
 
 import click
 
 
 load_dotenv()
+
+MENUE_FILE=os.path.dirname(__file__)+"/menues.json"
+IMAGE_FOLDER=os.path.dirname(__file__)+"/images"
 
 def get_menu():
     url = "http://stadtmuur.ch/item/woche-aktuell/"
@@ -39,7 +42,7 @@ def menu_to_json(html_menu):
     return json.loads(json_output)
 
 def update_menues():
-    with open("menues.json", "r") as f:
+    with open(MENUE_FILE, "r") as f:
         menues = json.load(f)
     today=blemli.from_date()
     if today not in menues.keys():
@@ -53,7 +56,7 @@ def update_menues():
     return menues
 
 def generate_menu_picture(dish,suffix,date):
-    image_name = f"./images/{date}{suffix}.png"
+    image_name = f"{IMAGE_FOLDER}/{date}{suffix}.png"
     try:
         with open(image_name, "rb") as f:
             logging.info(f"Image already exists: {image_name}")
@@ -88,7 +91,7 @@ def muurli(date,vegetarian,verbose):
         dish=current_menu["main_course"]
     print(dish)
     generate_menu_picture(dish,suffix,date)
-    subprocess.run(["qlmanage","-p", f"./images/{date}{suffix}.png"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(["qlmanage","-p", f"{IMAGE_FOLDER}/{date}{suffix}.png"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 
