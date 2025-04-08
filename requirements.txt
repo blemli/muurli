@@ -1,5 +1,7 @@
 beautifulsoup4==4.13.3
+blemli==0.0.7
+click==8.1.8
 icecream==2.1.4
-openai==1.61.1
-python-dotenv==1.0.1
+openai==1.71.0
+python-dotenv==1.1.0
 Requests==2.32.3

@@ -5,6 +5,9 @@ from icecream import ic
 import openai, json, blemli, subprocess,logging,requests,sys
 from dotenv import load_dotenv
 
+import click
+
+
 load_dotenv()
 
 def get_menu():
@@ -49,8 +52,8 @@ def update_menues():
             json.dump(menues, f, indent=4)
     return menues
 
-def generate_menu_picture(menu,date):
-    image_name = f"./images/{date}.png"
+def generate_menu_picture(dish,suffix,date):
+    image_name = f"./images/{date}{suffix}.png"
     try:
         with open(image_name, "rb") as f:
             logging.info(f"Image already exists: {image_name}")
@@ -59,7 +62,7 @@ def generate_menu_picture(menu,date):
         logging.info(f"Image does not exist: {image_name}")
         logging.info("Generating image")
     client = openai.OpenAI()
-    prompt = f"Erstelle ein Bild von einem weissen Teller auf einem Holztisch, gefüllt bis zum Rand mit folgendem Gericht: {menu['main_course']}. Keine zusätzlichen Speisen hinzufügen! Einfach, rustikal und authentisch!"    
+    prompt = f"Erstelle ein Bild von einem weissen Teller auf einem Holztisch, gefüllt bis zum Rand mit folgendem Gericht: {dish}. Keine zusätzlichen Speisen hinzufügen! Einfach, rustikal und authentisch"
     response = client.images.generate(
         model="dall-e-3",
         prompt=prompt,
@@ -70,13 +73,24 @@ def generate_menu_picture(menu,date):
         f.write(requests.get(image_url).content)
     logging.info(f"Image saved to {image_name}")
 
-if __name__=="__main__":
-    if len(sys.argv) > 1:
-        date = sys.argv[1]
-    else:
-        date = blemli.from_date()
+@click.command()
+@click.argument('date', default=blemli.from_date() )
+@click.option('-v', '--verbose', is_flag=True, help='Enable verbose output')
+@click.option('--vegetarian', is_flag=True, help='Show only vegetarian options')
+def muurli(date,vegetarian,verbose):
     menues=update_menues()
     current_menu=menues[date]
-    print(current_menu["main_course"])
-    generate_menu_picture(current_menu,date)
-    subprocess.run(["qlmanage","-p", f"./images/{date}.png"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    suffix=""
+    if vegetarian:
+        dish=current_menu["vegetarian"]
+        suffix="_v"
+    else:
+        dish=current_menu["main_course"]
+    print(dish)
+    generate_menu_picture(dish,suffix,date)
+    subprocess.run(["qlmanage","-p", f"./images/{date}{suffix}.png"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+
+if __name__=="__main__":
+    muurli()
