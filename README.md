@@ -17,13 +17,35 @@
    echo 'OPENAI_API_KEY="xxxxxx"' > .env
    ```
 
-3. run
+   > [!TIP]
+   >
+   > be lazy and get it from 1pw
+   >
+   > ```bash
+   > echo "OPENAI_API_KEY=$(op item get lnxaa66mnx435aii6k62zcz6ee --reveal --field Anmeldedaten)" > .env
+   > ```
+
+   
+
+3. create venv
+
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+4. install dependencies
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+5. run
 
    ```bash
    ./muurli.py --help
    ```
 
-   
 
 
 
