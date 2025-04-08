@@ -1,0 +1,42 @@
+{
+    "2025-04-01":{
+        "raw": "Penne Cinque P\n Salat und Dessert",
+        "meat": {},
+        "vegetarian": "Penne Cinque P",
+        "main_course": "Penne Cinque P",
+        "side_dishes": [
+            "Salat",
+            "Dessert"
+        ]
+    },
+    "2025-04-02": {
+        "raw": "Mexikanische Hackfleischpfanne\n oder Tofu und Reis\nSalat und Dessert",
+        "meat": "Mexikanische Hackfleischpfanne und Reis",
+        "vegetarian": "Tofu und Reis",
+        "main_course": "Mexikanische Hackfleischpfanne und Reis",
+        "side_dishes": [
+            "Salat",
+            "Dessert"
+        ]
+    },
+    "2025-04-03": {},
+    "2025-04-04": {
+        "raw": "Chicken Wings\n oder Blumenkohl Wings\n mit Kartoffel\nSalat und Dessert",
+        "meat": "Chicken Wings mit Kartoffel",
+        "vegetarian": "Blumenkohl Wings mit Kartoffel",
+        "main_course": "Chicken Wings mit Kartoffel",
+        "side_dishes": [
+            "Salat",
+            "Dessert"
+        ]
+    },
+    "2025-04-04": {
+        "raw": "Vegetarisches\n Erdnussbutter Curry\n mit Jasmin Reis\nSalat und Dessert",
+        "meat": {},
+        "vegetarian": "Vegetarisches Erdnussbutter Curry mit Jasmin Reis",
+        "main_course": "Vegetarisches Erdnussbutter Curry mit Jasmin Reis",
+        "side_dishes": [
+            "Salat",
+            "Dessert"
+        ]
+    }

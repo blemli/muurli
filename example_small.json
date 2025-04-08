@@ -1,0 +1,12 @@
+{
+	"2025-04-02": {
+        "raw": "Mexikanische Hackfleischpfanne\n oder Tofu und Reis\nSalat und Dessert",
+        "meat": "Mexikanische Hackfleischpfanne und Reis",
+        "vegetarian": "Tofu und Reis",
+        "main_course": "Mexikanische Hackfleischpfanne und Reis",
+        "side_dishes": [
+            "Salat",
+            "Dessert"
+        ]
+    }
+}
