@@ -2,10 +2,9 @@
 
 from bs4 import BeautifulSoup
 from icecream import ic
-import openai, json, blemli, subprocess,logging,requests,sys,os
+import openai, json, blemli, subprocess, logging, requests, sys, os, click
 from dotenv import load_dotenv
 from PIL import Image
-import click
 
 
 load_dotenv()
@@ -40,10 +39,13 @@ def menu_to_json(html_menu):
     ]
     )
     json_output = response.choices[0].message.content
-    ic(json_output)
     return json.loads(json_output)
 
 def update_menues():
+    if not os.path.exists(MENUE_FILE):
+        logging.warning(f"{MENUE_FILE} does not exist, creating new file")
+        with open(MENUE_FILE, "w+") as f:
+            json.dump({}, f, indent=4)
     with open(MENUE_FILE, "r+") as f:
         menues = json.load(f)
     today=blemli.from_date()
@@ -58,6 +60,8 @@ def update_menues():
     return menues
 
 def generate_menu_picture(dish,suffix,date):
+    if not os.path.exists(IMAGE_FOLDER):
+        os.makedirs(IMAGE_FOLDER)
     image_name = f"{IMAGE_FOLDER}/{date}{suffix}.png"
     try:
         with open(image_name, "rb") as f:
@@ -74,7 +78,7 @@ def generate_menu_picture(dish,suffix,date):
         prompt=prompt,
         size="1024x1024",
     )
-    image_url = response.data[0].url    
+    image_url = response.data[0].url
     with open(image_name, "wb") as f:
         f.write(requests.get(image_url).content)
     logging.info(f"Image saved to {image_name}")
@@ -83,7 +87,8 @@ def generate_menu_picture(dish,suffix,date):
 @click.argument('date', default=blemli.from_date() )
 @click.option('-v', '--verbose', is_flag=True, help='Enable verbose output')
 @click.option('--vegetarian', is_flag=True, help='Show only vegetarian options')
-def muurli(date,vegetarian,verbose):
+@click.option('--no-image', is_flag=True, help='Do not generate image')
+def muurli(date,vegetarian,verbose,no_image):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     menues=update_menues()
@@ -98,11 +103,9 @@ def muurli(date,vegetarian,verbose):
     else:
         dish=current_menu["main_course"]
     print(dish)
-    if not os.path.exists(IMAGE_FOLDER):
-        os.makedirs(IMAGE_FOLDER)
-    generate_menu_picture(dish,suffix,date)
-    Image.open(f"{IMAGE_FOLDER}/{date}{suffix}.png").show()
-
+    if not no_image:
+        generate_menu_picture(dish,suffix,date)
+        Image.open(f"{IMAGE_FOLDER}/{date}{suffix}.png").show()
 
 
 if __name__=="__main__":
