@@ -44,7 +44,7 @@ def menu_to_json(html_menu):
     return json.loads(json_output)
 
 def update_menues():
-    with open(MENUE_FILE, "r") as f:
+    with open(MENUE_FILE, "r+") as f:
         menues = json.load(f)
     today=blemli.from_date()
     if today not in menues.keys():
