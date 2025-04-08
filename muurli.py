@@ -25,6 +25,7 @@ def get_menu():
     return menu
 
 def menu_to_json(html_menu):
+    logging.info("parse menu to json with gpt")
     text = html_menu[0].get_text("\n") if html_menu else None
     with open("extraction_prompt.txt", "r") as f:
         prompt = f.read()
@@ -66,6 +67,7 @@ def generate_menu_picture(dish,suffix,date):
         logging.info("Generating image")
     client = openai.OpenAI()
     prompt = f"Erstelle ein Bild von einem weissen Teller auf einem Holztisch, gefüllt bis zum Rand mit folgendem Gericht: {dish}. Keine zusätzlichen Speisen hinzufügen! Einfach, rustikal und authentisch"
+    logging.info("generating image with dalle")
     response = client.images.generate(
         model="dall-e-3",
         prompt=prompt,
@@ -81,9 +83,14 @@ def generate_menu_picture(dish,suffix,date):
 @click.option('-v', '--verbose', is_flag=True, help='Enable verbose output')
 @click.option('--vegetarian', is_flag=True, help='Show only vegetarian options')
 def muurli(date,vegetarian,verbose):
+    if verbose:
+        logging.basicConfig(level=logging.DEBUG)
     menues=update_menues()
     current_menu=menues[date]
     suffix=""
+    if current_menu == {}:
+        logging.error(f"No menu found for {date}")
+        sys.exit(1)
     if vegetarian:
         dish=current_menu["vegetarian"]
         suffix="_v"
