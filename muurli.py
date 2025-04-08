@@ -13,6 +13,7 @@ load_dotenv()
 MENUE_FILE=os.path.dirname(__file__)+"/menues.json"
 IMAGE_FOLDER=os.path.dirname(__file__)+"/images"
 
+
 def get_menu():
     url = "http://stadtmuur.ch/item/woche-aktuell/"
     headers = {
@@ -52,7 +53,7 @@ def update_menues():
         this_week=menu_to_json(html_menu=html_menu)
         ic(this_week)
         menues.update(this_week)
-        with open("menues.json", "w") as f:
+        with open(MENUE_FILE, "w+") as f:
             json.dump(menues, f, indent=4)
     return menues
 
@@ -97,6 +98,8 @@ def muurli(date,vegetarian,verbose):
     else:
         dish=current_menu["main_course"]
     print(dish)
+    if not os.path.exists(IMAGE_FOLDER):
+        os.makedirs(IMAGE_FOLDER)
     generate_menu_picture(dish,suffix,date)
     Image.open(f"{IMAGE_FOLDER}/{date}{suffix}.png").show()
 
