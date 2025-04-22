@@ -11,6 +11,7 @@ load_dotenv()
 
 MENUE_FILE=os.path.dirname(__file__)+"/menues.json"
 IMAGE_FOLDER=os.path.dirname(__file__)+"/images"
+EXTRACTION_PROMPT=os.path.dirname(__file__)+"/extraction_prompt.txt"
 
 
 def get_menu():
@@ -27,7 +28,7 @@ def get_menu():
 def menu_to_json(html_menu):
     logging.info("parse menu to json with gpt")
     text = html_menu[0].get_text("\n") if html_menu else None
-    with open("extraction_prompt.txt", "r") as f:
+    with open(EXTRACTION_PROMPT, "r") as f:
         prompt = f.read()
     client = openai.OpenAI()
     response = client.chat.completions.create(
@@ -86,7 +87,7 @@ def generate_menu_picture(dish,suffix,date):
 @click.command()
 @click.argument('date', default=blemli.from_date() )
 @click.option('-v', '--verbose', is_flag=True, help='Enable verbose output')
-@click.option('--vegetarian', is_flag=True, help='Show only vegetarian options')
+@click.option('--vegetarian','--vegi', is_flag=True, help='Show only vegetarian options')
 @click.option('--no-image', is_flag=True, help='Do not generate image')
 def muurli(date,vegetarian,verbose,no_image):
     if verbose:
