@@ -5,6 +5,8 @@ from icecream import ic
 import openai, json, blemli, subprocess, logging, requests, sys, os, click
 from dotenv import load_dotenv
 from PIL import Image
+from rich.console import Console
+from rich.table import Table
 
 
 load_dotenv()
@@ -84,12 +86,33 @@ def generate_menu_picture(dish,suffix,date):
         f.write(requests.get(image_url).content)
     logging.info(f"Image saved to {image_name}")
 
+
+def list_menues():
+    with open(MENUE_FILE, "r") as f:
+        menues = json.load(f)
+    table = Table()
+    table.add_column("Date", style="bold")
+    table.add_column("Meat")
+    table.add_column("Vegetarian")
+    for date, menu in menues.items():
+        if not menu:
+            continue
+        table.add_row(
+            date,
+            menu.get("meat", "-"),
+            menu.get("vegetarian", "-")
+        )
+    Console().print(table)
+
 @click.command()
 @click.argument('date', default=blemli.from_date() )
 @click.option('-v', '--verbose', is_flag=True, help='Enable verbose output')
 @click.option('--vegetarian','--vegi', is_flag=True, help='Show only vegetarian options')
 @click.option('--no-image', is_flag=True, help='Do not generate image')
-def muurli(date,vegetarian,verbose,no_image):
+@click.option('--list','list_menues_flag', is_flag=True, help='List all available menues')
+def muurli(date,vegetarian,verbose,no_image,list_menues_flag):
+    if list_menues_flag:
+        list_menues()
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     menues=update_menues()

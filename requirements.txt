@@ -1,8 +1,9 @@
-beautifulsoup4==4.13.3
-blemli==0.0.7
+beautifulsoup4==4.13.4
+blemli==0.0.10
 click==8.1.8
 icecream==2.1.4
-openai==1.71.0
-Pillow==11.1.0
+openai==1.75.0
+Pillow==11.2.1
 python-dotenv==1.1.0
 Requests==2.32.3
+rich==14.0.0
