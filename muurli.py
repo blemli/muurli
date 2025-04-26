@@ -44,7 +44,7 @@ def menu_to_json(html_menu):
     json_output = response.choices[0].message.content
     return json.loads(json_output)
 
-def update_menues():
+def update_menues(force=False):
     if not os.path.exists(MENUE_FILE):
         logging.warning(f"{MENUE_FILE} does not exist, creating new file")
         with open(MENUE_FILE, "w+") as f:
@@ -52,7 +52,7 @@ def update_menues():
     with open(MENUE_FILE, "r+") as f:
         menues = json.load(f)
     today=blemli.from_date()
-    if today not in menues.keys():
+    if today not in menues.keys() or force:
         logging.warning("Today not in menues")
         html_menu = get_menu()
         this_week=menu_to_json(html_menu=html_menu)
@@ -62,17 +62,20 @@ def update_menues():
             json.dump(menues, f, indent=4)
     return menues
 
-def generate_menu_picture(dish,suffix,date):
+def generate_menu_picture(dish,suffix,date,force=False):
     if not os.path.exists(IMAGE_FOLDER):
         os.makedirs(IMAGE_FOLDER)
     image_name = f"{IMAGE_FOLDER}/{date}{suffix}.png"
-    try:
-        with open(image_name, "rb") as f:
-            logging.info(f"Image already exists: {image_name}")
-            return
-    except FileNotFoundError:
-        logging.info(f"Image does not exist: {image_name}")
-        logging.info("Generating image")
+    if not force:
+        try:
+            with open(image_name, "rb") as f:
+                logging.info(f"Image already exists: {image_name}")
+                return
+        except FileNotFoundError:
+            logging.info(f"Image does not exist: {image_name}")
+            logging.info("Generating image")
+    else:
+        logging.info(f"Force flag set, regenerating image: {image_name}")
     client = openai.OpenAI()
     prompt = f"Erstelle ein Bild von einem weissen Teller auf einem Holztisch, gefüllt bis zum Rand mit folgendem Gericht: {dish}. Keine zusätzlichen Speisen hinzufügen! Einfach, rustikal und authentisch"
     logging.info("generating image with dalle")
@@ -110,12 +113,13 @@ def list_menues():
 @click.option('--vegetarian','--vegi', is_flag=True, help='Show only vegetarian options')
 @click.option('--no-image', is_flag=True, help='Do not generate image')
 @click.option('--list','list_menues_flag', is_flag=True, help='List all available menues')
-def muurli(date,vegetarian,verbose,no_image,list_menues_flag):
+@click.option('-f', '--force', is_flag=True, help='Ignore caches and regenerate/redownload both image and menu')
+def muurli(date,vegetarian,verbose,no_image,list_menues_flag,force):
     if list_menues_flag:
         list_menues()
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
-    menues=update_menues()
+    menues=update_menues(force=force)
     current_menu=menues[date]
     suffix=""
     if current_menu == {}:
@@ -128,7 +132,7 @@ def muurli(date,vegetarian,verbose,no_image,list_menues_flag):
         dish=current_menu["main_course"]
     print(dish)
     if not no_image:
-        generate_menu_picture(dish,suffix,date)
+        generate_menu_picture(dish,suffix,date,force=force)
         Image.open(f"{IMAGE_FOLDER}/{date}{suffix}.png").show()
 
 
