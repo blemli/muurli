@@ -44,22 +44,35 @@ def menu_to_json(html_menu):
     json_output = response.choices[0].message.content
     return json.loads(json_output)
 
-def update_menues(force=False):
+def update_menues(force=False, date=None):
     if not os.path.exists(MENUE_FILE):
         logging.warning(f"{MENUE_FILE} does not exist, creating new file")
         with open(MENUE_FILE, "w+") as f:
             json.dump({}, f, indent=4)
     with open(MENUE_FILE, "r+") as f:
         menues = json.load(f)
-    today=blemli.from_date()
+    
+    today = blemli.from_date() if date is None else date
+    
     if today not in menues.keys() or force:
-        logging.warning("Today not in menues")
+        if force:
+            logging.info(f"Force flag set, regenerating menu for {today}")
+        else:
+            logging.warning(f"No menu found for {today}")
+            
         html_menu = get_menu()
-        this_week=menu_to_json(html_menu=html_menu)
-        ic(this_week)
-        menues.update(this_week)
-        with open(MENUE_FILE, "w+") as f:
-            json.dump(menues, f, indent=4)
+        try:
+            this_week = menu_to_json(html_menu=html_menu)
+            ic(this_week)
+            menues.update(this_week)
+            with open(MENUE_FILE, "w+") as f:
+                json.dump(menues, f, indent=4)
+        except Exception as e:
+            logging.error(f"Error processing menu data: {e}")
+            if today not in menues.keys():
+                # Only raise if we don't have any data for this date
+                raise
+    
     return menues
 
 def generate_menu_picture(dish,suffix,date,force=False):
@@ -119,11 +132,17 @@ def muurli(date,vegetarian,verbose,no_image,list_menues_flag,force):
         list_menues()
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
-    menues=update_menues(force=force)
+    menues=update_menues(force=force, date=date)
+    
+    # Check if the requested date exists in the menu data
+    if date not in menues:
+        logging.error(f"No menu found for {date}")
+        sys.exit(1)
+        
     current_menu=menues[date]
     suffix=""
     if current_menu == {}:
-        logging.error(f"No menu found for {date}")
+        logging.error(f"Menu for {date} is empty")
         sys.exit(1)
     if vegetarian:
         dish=current_menu["vegetarian"]
