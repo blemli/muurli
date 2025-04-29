@@ -14,15 +14,14 @@ load_dotenv()
 MENUE_FILE=os.path.dirname(__file__)+"/menues.json"
 IMAGE_FOLDER=os.path.dirname(__file__)+"/images"
 EXTRACTION_PROMPT=os.path.dirname(__file__)+"/extraction_prompt.txt"
-
+URL="http://stadtmuur.ch/item/woche-aktuell/"
 
 def get_menu():
-    url = "http://stadtmuur.ch/item/woche-aktuell/"
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
-    logging.info(f"Getting menu from {url}")
-    response = requests.get(url, headers=headers, verify=False)
+    logging.info(f"Getting menu from {URL}")
+    response = requests.get(URL, headers=headers, verify=False)
     soup = BeautifulSoup(response.text, 'html.parser')
     menu=soup.select("article")
     return menu
@@ -127,7 +126,12 @@ def list_menues():
 @click.option('--no-image', is_flag=True, help='Do not generate image')
 @click.option('--list','list_menues_flag', is_flag=True, help='List all available menues')
 @click.option('-f', '--force', is_flag=True, help='Ignore caches and regenerate/redownload both image and menu')
-def muurli(date,vegetarian,verbose,no_image,list_menues_flag,force):
+@click.option('--web', is_flag=True, help='Show the web version of menu')
+def muurli(date,vegetarian,verbose,no_image,list_menues_flag,force,web):
+    if web:
+        logging.info(f"Opening web version of menu: {URL}")
+        subprocess.run(["open", URL])
+        sys.exit(0)
     if list_menues_flag:
         list_menues()
     if verbose:
