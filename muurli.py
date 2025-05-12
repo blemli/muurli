@@ -14,17 +14,28 @@ load_dotenv()
 MENUE_FILE=os.path.dirname(__file__)+"/menues.json"
 IMAGE_FOLDER=os.path.dirname(__file__)+"/images"
 EXTRACTION_PROMPT=os.path.dirname(__file__)+"/extraction_prompt.txt"
-URL="http://stadtmuur.ch/item/woche-aktuell/"
+URL="https://stadtmuur.ch/item/woche-aktuell/"
 
 def get_menu():
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
     logging.info(f"Getting menu from {URL}")
-    response = requests.get(URL, headers=headers, verify=False)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    menu=soup.select("article")
-    return menu
+    # Properly handle SSL verification
+    try:
+        response = requests.get(URL, headers=headers)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        menu = soup.select("article")
+        return menu
+    except requests.exceptions.SSLError:
+        logging.warning("SSL verification failed. Falling back to unverified request.")
+        # Import warnings to suppress InsecureRequestWarning
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        response = requests.get(URL, headers=headers, verify=False)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        menu = soup.select("article")
+        return menu
 
 def menu_to_json(html_menu):
     logging.info("parse menu to json with gpt")
@@ -53,16 +64,16 @@ def update_menues(force=False, date=None):
     
     today = blemli.from_date() if date is None else date
     
-    if today not in menues.keys() or force:
+    if today not in menues or force:
         if force:
             logging.info(f"Force flag set, regenerating menu for {today}")
         else:
-            logging.warning(f"No menu found for {today}")
+            logging.info(f"Fetching menu for {today}")
             
         html_menu = get_menu()
         try:
             this_week = menu_to_json(html_menu=html_menu)
-            ic(this_week)
+
             menues.update(this_week)
             with open(MENUE_FILE, "w+") as f:
                 json.dump(menues, f, indent=4)
