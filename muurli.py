@@ -124,7 +124,7 @@ def list_menues():
 @click.option('-v', '--verbose', is_flag=True, help='Enable verbose output')
 @click.option('--vegetarian','--vegi', is_flag=True, help='Show only vegetarian options')
 @click.option('--no-image', is_flag=True, help='Do not generate image')
-@click.option('--list','list_menues_flag', is_flag=True, help='List all available menues')
+@click.option('-l','--list','list_menues_flag', is_flag=True, help='List all available menues')
 @click.option('-f', '--force', is_flag=True, help='Ignore caches and regenerate/redownload both image and menu')
 @click.option('--web', is_flag=True, help='Show the web version of menu')
 def muurli(date,vegetarian,verbose,no_image,list_menues_flag,force,web):
