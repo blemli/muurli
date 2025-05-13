@@ -11,9 +11,9 @@ from rich.table import Table
 
 load_dotenv()
 
-MENUE_FILE=os.path.dirname(__file__)+"/menues.json"
-IMAGE_FOLDER=os.path.dirname(__file__)+"/images"
-EXTRACTION_PROMPT=os.path.dirname(__file__)+"/extraction_prompt.txt"
+MENUE_FILE=os.path.dirname(os.path.dirname(__file__))+"/menues.json"
+IMAGE_FOLDER=os.path.dirname(os.path.dirname(__file__))+"/images"
+EXTRACTION_PROMPT=os.path.dirname(os.path.dirname(__file__))+"/extraction_prompt.txt"
 URL="https://stadtmuur.ch/item/woche-aktuell/"
 
 def get_menu():
@@ -165,7 +165,8 @@ def muurli(date,vegetarian,verbose,no_image,list_menues_flag,force,web):
     # Set up logging first
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
-    
+    else:
+        logging.basicConfig(level=logging.INFO)
         
     if web:
         logging.info(f"Opening web version of menu: {URL}")

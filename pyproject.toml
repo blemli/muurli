@@ -8,13 +8,12 @@ version = "0.1.0"
 description = "A CLI tool to fetch and display menu data from stadtmuur.ch for Raspberry Pi with E Ink display"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Stephan"}
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
@@ -48,3 +47,6 @@ line_length = 88
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
+
+[tool.setuptools]
+packages = ["muurli"]
