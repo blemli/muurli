@@ -25,8 +25,6 @@
    > echo "OPENAI_API_KEY=$(op item get lnxaa66mnx435aii6k62zcz6ee --reveal --field Anmeldedaten)" > .env
    > ```
 
-   
-
 3. create venv
 
    ```bash
@@ -48,4 +46,4 @@
 
 
 
-
+//todo: make installable with pipx
