@@ -173,6 +173,7 @@ def muurli(date,vegetarian,verbose,no_image,list_menues_flag,force,web):
         sys.exit(0)
     if list_menues_flag:
         list_menues()
+        sys.exit(0)
     menues=update_menues(force=force, date=date)
     
     # Check if the requested date exists in the menu data
