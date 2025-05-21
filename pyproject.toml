@@ -49,4 +49,4 @@ testpaths = ["tests"]
 python_files = "test_*.py"
 
 [tool.setuptools]
-packages = ["muurli"]
+py-modules = ["muurli"]
