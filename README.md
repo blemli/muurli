@@ -47,3 +47,32 @@
 
 
 //todo: make installable with pipx
+
+## use as a service
+
+```bash
+sudo mkdir /opt/muurli
+chown /opt/muurli
+sudo chown -R pi  /opt/muurli
+sudo apt install -y git vim
+git clone https://github.com/blemli/muurli  /opt/muurli/
+cd /opt/git
+python3 -m venv .venv
+source .venv/bin/activate
+sudo apt update
+sudo apt install python3-dev
+pip install -r requirements.txt
+sudo raspi-config nonint do_spi 0
+sudo raspi-config nonint do_i2c 0
+echo "dtoverlay=spi0-0cs" | sudo tee -a /boot/firmware/config.txt
+sudo reboot
+```
+
+
+
+
+
+> [!TIP]	
+>
+> use the image.py --file xy.png to show custom images on the screen
+

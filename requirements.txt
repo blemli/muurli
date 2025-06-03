@@ -7,3 +7,4 @@ Pillow==11.2.1
 python-dotenv==1.1.0
 Requests==2.32.3
 rich==14.0.0
+inky==2.1.0
