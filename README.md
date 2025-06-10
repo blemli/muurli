@@ -76,3 +76,10 @@ sudo reboot
 >
 > use the image.py --file xy.png to show custom images on the screen
 
+
+
+
+
+## Ideas
+
+[qi-receiver](https://www.amazon.co.uk/DiGiYes-Standard-Wireless-Charger-Receiver/dp/B00L7CWWLU?s=electronics&ie=UTF8&qid=1534971391&sr=1-5&keywords=galaxy+s5+wireless+charging)
