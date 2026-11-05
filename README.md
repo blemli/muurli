@@ -22,7 +22,7 @@
    > be lazy and get it from 1pw
    >
    > ```bash
-   > echo "OPENAI_API_KEY=$(op item get lnxaa66mnx435aii6k62zcz6ee --reveal --field Anmeldedaten)" > .env
+   > echo "OPENAI_API_KEY=$(op item get am3x3bubl5vax7cb5kmzneawby --reveal --field Anmeldedaten)" > .env
    > ```
 
 3. create venv

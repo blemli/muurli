@@ -50,4 +50,3 @@ python_files = "test_*.py"
 
 [tool.setuptools]
 py-modules = ["muurli"]
-include-package-data = true

@@ -9,12 +9,32 @@ from rich.console import Console
 from rich.table import Table
 
 
-load_dotenv()
+# muurli's own .env (next to the script, or in the current directory when installed
+# with pipx) wins over a generic OPENAI_API_KEY exported in the shell.
+for env_file in (os.path.dirname(__file__)+"/.env", ".env"):
+    load_dotenv(env_file, override=True)
 
 MENUE_FILE=os.path.dirname(__file__)+"/menues.json"
 IMAGE_FOLDER=os.path.dirname(__file__)+"/images"
-EXTRACTION_PROMPT=os.path.dirname(__file__)+"/extraction_prompt.txt"
 URL="https://stadtmuur.ch/item/woche-aktuell/"
+# Inlined rather than read from a file: a single-module install (pipx) ships only muurli.py.
+EXTRACTION_PROMPT=r"""Extract menu items from the provided text and format them exactly as JSON.
+Strictly match this example structure without deviation:
+´´´json
+            {
+              "2025-04-02": {
+                "raw": "Mexikanische Hackfleischpfanne\n oder Tofu und Reis\nSalat und Dessert",
+                "meat": "Mexikanische Hackfleischpfanne und Reis",
+                "vegetarian": "Tofu und Reis",
+                "main_course": "Mexikanische Hackfleischpfanne und Reis",
+                "salad": true,
+                "dessert": true"
+              }
+            }
+´´´
+If there is no meat menu, use 'vegetarian' as the main course. and set 'meat' to 'null'.
+If the restaurant is closed (no menu), return an empty JSON object for that date. Also add saturday and sunday.
+Return ONLY valid JSON!"""
 
 def get_menu():
     headers = {
@@ -40,11 +60,10 @@ def get_menu():
 def menu_to_json(html_menu):
     logging.info("parse menu to json with gpt")
     text = html_menu[0].get_text("\n") if html_menu else None
-    with open(EXTRACTION_PROMPT, "r") as f:
-        prompt = f.read()
+    prompt = EXTRACTION_PROMPT
     client = openai.OpenAI()
     response = client.chat.completions.create(
-    model="gpt-4-turbo",
+    model="gpt-6-luna",
     response_format={"type": "json_object"},
     messages=[
         {"role": "system", "content": (prompt)},
@@ -103,7 +122,7 @@ def generate_menu_picture(dish,suffix,date,force=False):
     prompt = f"Erstelle ein Bild von einem weissen Teller auf einem Holztisch, gefüllt bis zum Rand mit folgendem Gericht: {dish}. Keine zusätzlichen Speisen hinzufügen! Einfach, rustikal und authentisch"
     logging.info("generating image with dalle")
     response = client.images.generate(
-        model="gpt-image-1",
+        model="gpt-image-2.6-sunburst",
         prompt=prompt,
         size="1024x1024",
     )
