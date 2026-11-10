@@ -27,6 +27,15 @@ if not args.file:
 image = Image.open(args.file)
 resizedimage = image.resize(inky.resolution)
 
+# inky quantizes through a palette image it never loads, which Pillow 13 rejects
+# ("ValueError: empty palette"). Dither to the display's palette here instead;
+# set_image() takes a P image as it is.
+if resizedimage.mode != "P" and hasattr(inky, "_palette_blend"):
+    palette = inky._palette_blend(saturation)
+    palette_image = Image.new("P", (1, 1))
+    palette_image.putpalette(palette + [0, 0, 0] * (256 - len(palette) // 3))
+    resizedimage = resizedimage.convert("RGB").quantize(palette=palette_image)
+
 try:
     inky.set_image(resizedimage, saturation=saturation)
 except TypeError:
